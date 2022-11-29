@@ -2,8 +2,9 @@
 using Autofac;
 using Caliburn.Micro;
 using Caliburn.Micro.Autofac;
+using XB1ControllerStatus;
 
-namespace XB1ControllerBatteryIndicator
+namespace xb1ControllerStatus
 {
     internal class Bootstrapper : AutofacBootstrapper<SystemTrayViewModel>
     {
@@ -23,7 +24,7 @@ namespace XB1ControllerBatteryIndicator
         {
             base.OnStartup(sender, e);
 
-            DisplayRootViewFor<SystemTrayViewModel>();
+            DisplayRootViewForAsync<SystemTrayViewModel>();
         }
     }
 }

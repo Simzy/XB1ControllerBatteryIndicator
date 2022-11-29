@@ -11,23 +11,22 @@ using System.IO;
 using System.Diagnostics;
 using System.Globalization;
 using System.Media;
-using XB1ControllerBatteryIndicator.ShellHelpers;
+using XB1ControllerStatus.ShellHelpers;
 using MS.WindowsAPICodePack.Internal;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
-using XB1ControllerBatteryIndicator.Localization;
-using XB1ControllerBatteryIndicator.Properties;
+using XB1ControllerStatus.Localization;
+using XB1ControllerStatus.Properties;
 using System.Security.Principal;
 using Microsoft.Win32;
 
-namespace XB1ControllerBatteryIndicator
+namespace XB1ControllerStatus
 {
     public class SystemTrayViewModel : Caliburn.Micro.Screen
     {
         private string _activeIcon;
         private Controller _controller;
         private string _tooltipText;
-        private const string APP_ID = "NiyaShy.XB1ControllerBatteryIndicator";
-        private bool[] toast_shown = new bool[5];
+        private const string APP_ID = "xb1ControllerStatus";
         private Dictionary<string, int> numdict = new Dictionary<string, int>();
         private const string ThemeRegKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
         private const string ThemeRegValueName = "SystemUsesLightTheme";
@@ -89,16 +88,8 @@ namespace XB1ControllerBatteryIndicator
                         if (currentController.IsConnected)
                         {
                             var batteryInfo = currentController.GetBatteryInformation(BatteryDeviceType.Gamepad);
-                            //check if toast was already triggered and battery is no longer empty...
+                            //check if battery is no longer empty...
                             if (batteryInfo.BatteryLevel != BatteryLevel.Empty)
-                            {
-                                if (toast_shown[numdict[$"{currentController.UserIndex}"]] == true)
-                                {
-                                    //...reset the notification
-                                    toast_shown[numdict[$"{currentController.UserIndex}"]] = false;
-                                    ToastNotificationManager.History.Remove($"Controller{currentController.UserIndex}", "ControllerToast", APP_ID);
-                                }
-                            }
                             //wired
                             if (batteryInfo.BatteryType == BatteryType.Wired)
                             {
@@ -126,13 +117,6 @@ namespace XB1ControllerBatteryIndicator
                                 //when "empty" state is detected...
                                 if (batteryInfo.BatteryLevel == BatteryLevel.Empty)
                                 {
-                                    //check if toast (notification) for current controller was already triggered
-                                    if (toast_shown[numdict[$"{currentController.UserIndex}"]] == false)
-                                    {
-                                        //if not, trigger it
-                                        toast_shown[numdict[$"{currentController.UserIndex}"]] = true;
-                                        ShowToast(currentController.UserIndex);
-                                    }
                                     //check if notification sound is enabled
                                     if (Settings.Default.LowBatteryWarningSound_Enabled)
                                     {
@@ -165,10 +149,10 @@ namespace XB1ControllerBatteryIndicator
             }
         }
 
-        //try to create a start menu shortcut (required for sending toasts)
+        //try to create a start menu shortcut
         private bool TryCreateShortcut()
         {
-            String shortcutPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Microsoft\\Windows\\Start Menu\\Programs\\XB1ControllerBatteryIndicator.lnk";
+            String shortcutPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Microsoft\\Windows\\Start Menu\\Programs\\xb1ControllerStatus.lnk";
             if (!File.Exists(shortcutPath))
             {
                 InstallShortcut(shortcutPath);
@@ -200,63 +184,6 @@ namespace XB1ControllerBatteryIndicator
             IPersistFile newShortcutSave = (IPersistFile)newShortcut;
 
             ErrorHelper.VerifySucceeded(newShortcutSave.Save(shortcutPath, true));
-        }
-        //send a toast
-        private void ShowToast(UserIndex controllerIndex)
-        {
-            int controllerId = numdict[$"{controllerIndex}"];
-            var controllerIndexCaption = GetControllerIndexCaption(controllerIndex);
-            string argsDismiss = $"dismissed";
-            string argsLaunch = $"{controllerId}";
-            //how the content gets arranged
-            string toastVisual =
-                $@"<visual>
-                        <binding template='ToastGeneric'>
-                            <text>{string.Format(Strings.Toast_Title, controllerIndexCaption)}</text>
-                            <text>{string.Format(Strings.Toast_Text, controllerIndexCaption)}</text>
-                            <text>{Strings.Toast_Text2}</text>
-                        </binding>
-                    </visual>";
-            //Button on the toast
-            string toastActions =
-                $@"<actions>
-                        <action content='{Strings.Toast_Dismiss}' arguments='{argsDismiss}'/>
-                   </actions>";
-            //combine content and button
-            string toastXmlString =
-                $@"<toast scenario='reminder' launch='{argsLaunch}'>
-                        {toastVisual}
-                        {toastActions}
-                   </toast>";
-
-            XmlDocument toastXml = new XmlDocument();
-            toastXml.LoadXml(toastXmlString);
-            //create the toast
-            var toast = new ToastNotification(toastXml);
-            toast.Activated += ToastActivated;
-            toast.Dismissed += ToastDismissed;
-            toast.Tag = $"Controller{controllerIndex}";
-            toast.Group = "ControllerToast";
-            //..and send it
-            ToastNotificationManager.CreateToastNotifier(APP_ID).Show(toast);
-
-        }
-        //react to click on toast or button
-        private void ToastActivated(ToastNotification sender, object e)
-        {
-            var toastArgs = e as ToastActivatedEventArgs;
-            int controllerId = 0;
-            //if the return value contains a controller ID
-            if (Int32.TryParse(toastArgs.Arguments, out controllerId))
-            {
-                //reset the toast warning (it will trigger again if battery level is still empty)
-                toast_shown[controllerId] = false;
-            }
-            //otherwise, do nothing
-        }
-        private void ToastDismissed(ToastNotification sender, object e)
-        {
-            //do nothing
         }
 
         public void ExitApplication()
@@ -298,19 +225,6 @@ namespace XB1ControllerBatteryIndicator
             }
         }
 
-        private void GetAvailableLanguages()
-        {
-            AvailableLanguages.Clear();
-            foreach (var language in TranslationManager.AvailableLanguages)
-            {
-                AvailableLanguages.Add(language);
-            }
-        }
-
-        public void UpdateNotificationSound()
-        {
-            _soundPlayer = File.Exists(Settings.Default.wavFile) ? new SoundPlayer(Settings.Default.wavFile) : null;
-        }
         public void WatchTheme()
         {
             var currentUser = WindowsIdentity.GetCurrent();

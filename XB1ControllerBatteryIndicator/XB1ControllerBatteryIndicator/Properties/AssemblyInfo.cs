@@ -7,11 +7,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("XB1ControllerBatteryIndicator")]
+[assembly: AssemblyTitle("XB1ControllerStatus")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("NiyaShy")]
-[assembly: AssemblyProduct("XB1ControllerBatteryIndicator")]
+[assembly: AssemblyCompany("Simzy  ")]
+[assembly: AssemblyProduct("XB1ControllerStatus")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

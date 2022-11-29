@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
 using System.Xml;
-using XB1ControllerBatteryIndicator.Localization;
+using XB1ControllerStatus.Localization;
 
-namespace XB1ControllerBatteryIndicator
+namespace XB1ControllerStatus
 {
     /// <summary>
     ///     Interaction logic for SystemTrayView.xaml
@@ -25,9 +25,14 @@ namespace XB1ControllerBatteryIndicator
             var language = new CultureInfo(Properties.Settings.Default.Language);
             TranslationManager.CurrentLanguage = language;
         }
+
+        private void InitializeComponent()
+        {
+            throw new NotImplementedException();
+        }
+
         RegistryKey autoStartKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-        private string appID = "XB1ControllerBatteryIndicator";
-        string xmlUrl = "http://xb1cbi.kienai.de/current_version.xml";
+        private string appID = "xb1ControllerStatus";
 
         //create autostart registry key
         private void StartWithWindows()

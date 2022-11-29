@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using MS.WindowsAPICodePack.Internal;
 
-namespace XB1ControllerBatteryIndicator.ShellHelpers
+namespace XB1ControllerStatus.ShellHelpers
 {
     internal enum STGM : long
     {

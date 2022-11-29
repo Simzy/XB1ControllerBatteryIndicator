@@ -1,14 +1,14 @@
-﻿<Window x:Class="XB1ControllerBatteryIndicator.SystemTrayView"
+﻿<Window x:Class="XB1ControllerStatus.SystemTrayView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:cal="http://www.caliburnproject.org"
         xmlns:tb="http://www.hardcodet.net/taskbar"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:xb1ControllerBatteryIndicator="clr-namespace:XB1ControllerBatteryIndicator"
+        xmlns:xb1ControllerStatus="clr-namespace:xb1ControllerStatus"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:my="clr-namespace:XB1ControllerBatteryIndicator"
+        xmlns:my="clr-namespace:xb1ControllerStatus" xmlns:xb1controllerstatus="clr-namespace:XB1ControllerStatus"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=xb1ControllerBatteryIndicator:SystemTrayViewModel, IsDesignTimeCreatable=True}"
+        d:DataContext="{d:DesignInstance Type=xb1controllerstatus:SystemTrayViewModel, IsDesignTimeCreatable=True}"
         cal:Bind.AtDesignTime="True"
         Title="SystemTrayView"
         Height="0" Width="0"
@@ -29,9 +29,9 @@
         reuse the same context menu (which is a resource) again (which will have its DataContext set to the old TaskbarIcon)
         -->
         <ContextMenu x:Shared="false" x:Key="MainSysTrayMenu">
-            <MenuItem x:Name="AutoStart" Header="{my:Localization ContextMenu_AutoStart}" IsCheckable="True" Click="AutoStart_Click" IsChecked="{my:SettingBinding Path=AutoStart}" />
-            <MenuItem x:Name="UpdateCheck" Header="{my:Localization ContextMenu_UpdateCheck}" IsCheckable="True" Click="Update_Click" IsChecked="{my:SettingBinding Path=UpdateCheck}" />
-            <MenuItem Header="{my:Localization ContextMenu_Language}" IsCheckable="False" ItemsSource="{Binding Path=AvailableLanguages}" DisplayMemberPath="DisplayName" Click="LanguageItem_OnClick">
+            <MenuItem x:Name="AutoStart" Header="{d:Localization ContextMenu_AutoStart}" IsCheckable="True" Click="AutoStart_Click" IsChecked="{my:SettingBinding Path=AutoStart}" />
+            <MenuItem x:Name="UpdateCheck" Header="{d:Localization ContextMenu_UpdateCheck}" IsCheckable="True" Click="Update_Click" IsChecked="{my:SettingBinding Path=UpdateCheck}" />
+            <MenuItem Header="{d:Localization ContextMenu_Language}" IsCheckable="False" ItemsSource="{Binding Path=AvailableLanguages}" DisplayMemberPath="DisplayName" Click="LanguageItem_OnClick">
                 <MenuItem.ItemContainerStyle>
                     <Style TargetType="MenuItem">
                         <Setter Property="IsChecked" Value="False"/>

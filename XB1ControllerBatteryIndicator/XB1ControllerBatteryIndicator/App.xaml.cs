@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace XB1ControllerBatteryIndicator
+namespace XB1ControllerStatus
 {
     /// <summary>
     ///     Interaction logic for App.xaml

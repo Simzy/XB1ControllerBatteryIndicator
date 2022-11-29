@@ -1,6 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
-namespace XB1ControllerBatteryIndicator
+namespace XB1ControllerStatus
 {
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
@@ -10,6 +11,11 @@ namespace XB1ControllerBatteryIndicator
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            throw new NotImplementedException();
         }
     }
 }
